@@ -9,7 +9,7 @@
  * Return: NULL or pointer
  */
 
-char *_strtok(char *restrict s, char *restrict d)
+char *_strtok(char *s, char *d)
 {
 	static char *start;
 	static char *cont;
