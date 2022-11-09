@@ -1,4 +1,5 @@
 # include "main.h"
+#include <unistd.h>
 
 
 /**
@@ -17,14 +18,14 @@ int shell_cntrl(char **argv)
 	if (child_pid < 0)
 	{
 		perror("fork");
-		return (0);
+		return (1);
 	}
 	if (child_pid == 0)
 	{
 		if (execve(*argv, argv, environ) < 0)
 		{
 			perror("execve");
-			return (0);
+			return (1);
 		}
 	} else
 		do {
@@ -32,8 +33,9 @@ int shell_cntrl(char **argv)
 			if (w == -1)
 			{
 				perror("waitpid");
-				return (0);
+				return (1);
 			}
 		} while (!WIFSIGNALED(status) && !WIFEXITED(status));
-	return (1);
+	return (0);
 }
+
