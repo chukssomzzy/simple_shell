@@ -12,7 +12,7 @@
 char **split_t_arr(char *s, const char *dl, size_t *n)
 {
 	char **argv;
-	size_t i = 1;
+	size_t i = 0;
 	char *str;
 
 	argv = malloc(sizeof(*argv) * *n);
@@ -23,10 +23,9 @@ char **split_t_arr(char *s, const char *dl, size_t *n)
 	}
 	for (str = s; ; str = NULL, i++)
 	{
-		if (i == *n)
+		if (i >= *n)
 		{
-			i = 10;
-			n += i;
+			*n += 10;
 			argv = realloc(argv, sizeof(*argv) * *n);
 			if (!argv)
 			{
@@ -34,7 +33,9 @@ char **split_t_arr(char *s, const char *dl, size_t *n)
 				return (0);
 			}
 		}
-		*argv = strtok(str, dl);
+		*(argv + i) = strtok(str, dl);
+		if (*(argv + i) == NULL)
+			break;
 	}
 	return (argv);
 }

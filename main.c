@@ -2,27 +2,27 @@
 # include <stdio.h>
 #include <unistd.h>
 # define DELIM " \n"
- int check_dir(char *p, char *c)
+int check_dir(char *p, char *c);
 static void free_buf(char **buf, size_t n);
 /**
  * main - starting point for execution
  * @argc: Size of argv
  * @argv: Contains cmd args
- * Return: 0 (success())
+ * Return: 0 (successe))
  */
 
 
 int main(int argc, char **argv)
 {
-	char *line, *p = argv[0];
+	char *line = NULL, *p = argv[argc - 1];
 	size_t n;
 	ssize_t lnr;
-	size_t arr_size = 100;
+	size_t arr_size = 1;
 	char **lines;
 
 	do {
-		lnr = getline(&line, &n, stdin);
 		print_line(NULL);
+		lnr = getline(&line, &n, stdin);
 		if (lnr == -1)
 		{
 			perror("getline");
@@ -32,17 +32,23 @@ int main(int argc, char **argv)
 		lines = split_t_arr(line, DELIM, &arr_size);
 		if (!lines)
 		{
+			free(line);
 			perror("split_t_arr");
 			free_buf(lines, arr_size);
 			exit(1);
 		}
-		if (!(shell_cntrl(lines)))
+		if (check_dir(lines[0], p))
+		{
+			free(line);
+			free_buf(lines, arr_size);
+			exit(0);
+		}
+		if ((shell_cntrl(lines)))
 		{
 			perror("shell_cntrl");
 			free_buf(lines, arr_size);
 			exit(1);
 		}
-		print_line(NULL);
 	} while (lnr != EOF);
 }
 
@@ -72,7 +78,7 @@ int check_dir(char *p, char *c)
 {
 	if (access(p, F_OK | X_OK) != -1)
 		return (0);
-	dprintf(STDERR_FILENO, "%s: 1: %s: not found", c, p);
+	dprintf(STDERR_FILENO, "%s: 1: %s: not found\n", c, p);
 	return (1);
 }
 
