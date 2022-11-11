@@ -2,7 +2,6 @@
 # include <stdio.h>
 #include <unistd.h>
 # define DELIM " \n"
-int check_dir(char *p, char *c);
 static void free_buf(char **buf, size_t n);
 /**
  * main - starting point for execution
@@ -30,6 +29,7 @@ int main(int argc, char **argv)
 			exit(1);
 		}
 		lines = split_t_arr(line, DELIM, &arr_size);
+		lines[0] = getpath(lines[0]);
 		if (!lines)
 		{
 			free(line);
@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 		{
 			free(line);
 			free_buf(lines, arr_size);
-			exit(0);
+			continue;
 		}
 		if ((shell_cntrl(lines)))
 		{
@@ -78,7 +78,8 @@ int check_dir(char *p, char *c)
 {
 	if (access(p, F_OK | X_OK) != -1)
 		return (0);
-	dprintf(STDERR_FILENO, "%s: 1: %s: not found\n", c, p);
+	if (c)
+		dprintf(STDERR_FILENO, "%s: 1: %s: not found\n", c, p);
 	return (1);
 }
 

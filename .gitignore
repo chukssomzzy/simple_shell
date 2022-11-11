@@ -1,0 +1,7 @@
+# Swaps
+*.swp 
+*.un~
+*~
+
+# Executable
+*.out
