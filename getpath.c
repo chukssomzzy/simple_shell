@@ -5,7 +5,8 @@ static pathnode_t *create_path_node(char *);
 static int  check_link_cmd(char *p);
 static char *_strcat(char *d, char *s);
 static void free_list(pathnode_t *p);
-
+static int find_e(char *p);
+static pathnode_t *add_node_end(pathnode_t **head, char *str);
 /**
  * getpath -  absolute path to a cmd
  * @p: pointer to path
@@ -23,13 +24,14 @@ char *getpath(char *p)
 	while (path->next)
 	{
 		pathname = _strcat(path->p, p);
-		if (!check_dir(pathname, NULL))
+		if (!(check_dir(pathname, NULL)))
 		{
-			free(pathname);
+			free_list(path);
 			free(p);
 			return (pathname);
 		}
 		free(pathname);
+		path = path->next;
 	}
 	free(p);
 	free_list(path);
@@ -45,47 +47,19 @@ char *getpath(char *p)
 
 pathnode_t *create_path_node(char *p)
 {
-	pathnode_t *head, *tmp;
-	char *pathname = _getenv(p);
-	char *str;
-	int i = 0;
+	pathnode_t *head = NULL;
+	char *pathname, *str, *tmps;
 
-	head = malloc(sizeof(pathnode_t));
-	if (!head)
-	{
-		perror("malloc");
-		exit(1);
-	}
+	pathname = str = _getenv(p);
 	for (str = pathname; ; str = NULL)
 	{
-		if (!i)
-		{
-			strtok(str, "=:");
-			head->p = strtok(str, "=:");
-			head->next = malloc(sizeof(pathnode_t));
-			if (!(head->next))
-			{
-				perror("malloc");
-				exit(1);
-			}
-			tmp = head;
-			i++;
-			continue;
-		}
-		if (!head && i)
-		{
-			tmp->p = strtok(str, "=:");
-			if (!(tmp->p))
-				break;
-			tmp->next = malloc(sizeof(pathnode_t));
-			if (tmp->next)
-			{
-				perror("malloc");
-				exit(1);
-			}
-		}
-
+		tmps = strtok(str, "=:");
+		if (!tmps)
+			break;
+		if (find_e(tmps))
+			head = add_node_end(&head, tmps);
 	}
+	free(pathname);
 	return (head);
 }
 
@@ -123,7 +97,7 @@ char *_strcat(char *d, char *s)
 		return (NULL);
 	if (!s)
 		return (d);
-	t = malloc(sizeof(char) * (dlen + slen + 1));
+	t = malloc(sizeof(char) * (dlen + slen + 1 + 1));
 	if (!t)
 	{
 		perror("malloc");
@@ -135,6 +109,7 @@ char *_strcat(char *d, char *s)
 		*(t + i) = *(d + i);
 		i++;
 	}
+	*(t + i++) = '/';
 	while (*(s + j))
 		*(t + i++) = *(s + j++);
 	return (t);
@@ -155,4 +130,57 @@ void free_list(pathnode_t *p)
 		p = tmp;
 	}
 	free(p);
+}
+
+/**
+ * add_node_end - add a node to end of lists
+ * @head: parent lists
+ * @str: str pointer
+ *
+ * Return: addr of element added
+ */
+
+pathnode_t *add_node_end(pathnode_t **head, char *str)
+{
+	pathnode_t *new, *tmp;
+
+	if (!head || !str)
+		return (NULL);
+	new = malloc(sizeof(pathnode_t));
+	if (!new)
+	{
+		perror("malloc");
+		exit(1);
+	}
+	new->p = _strdup(str);
+	new->next = NULL;
+
+	tmp = *head;
+	if (!(*head))
+		return ((*head = new));
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = new;
+	return (*head);
+}
+
+/**
+ * find_e - find
+ * @p: char *
+ * Return: 1 0
+ */
+
+int find_e(char *p)
+{
+	char *s = p;
+
+	if (!p)
+		return (0);
+	while (*s != '/')
+	{
+		if (!(*s))
+			return (0);
+		s++;
+	}
+	return (1);
 }

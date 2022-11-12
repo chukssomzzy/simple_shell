@@ -1,6 +1,7 @@
 # include "main.h"
 # include <stdio.h>
-#include <unistd.h>
+# include <unistd.h>
+# include <sys/stat.h>
 # define DELIM " \n"
 static void free_buf(char **buf, size_t n);
 /**
@@ -18,6 +19,7 @@ int main(int argc, char **argv)
 	ssize_t lnr;
 	size_t arr_size = 1;
 	char **lines;
+	char *tmp;
 
 	do {
 		print_line(NULL);
@@ -29,26 +31,26 @@ int main(int argc, char **argv)
 			exit(1);
 		}
 		lines = split_t_arr(line, DELIM, &arr_size);
+		tmp = lines[0];
 		lines[0] = getpath(lines[0]);
 		if (!lines)
 		{
-			free(line);
 			perror("split_t_arr");
-			free_buf(lines, arr_size);
 			exit(1);
 		}
 		if (check_dir(lines[0], p))
 		{
 			free(line);
+			free(tmp);
 			free_buf(lines, arr_size);
 			continue;
 		}
 		if ((shell_cntrl(lines)))
 		{
 			perror("shell_cntrl");
-			free_buf(lines, arr_size);
 			exit(1);
 		}
+		free_buf(lines, arr_size);
 	} while (lnr != EOF);
 }
 
@@ -76,7 +78,9 @@ void free_buf(char **buf, size_t n)
 
 int check_dir(char *p, char *c)
 {
-	if (access(p, F_OK | X_OK) != -1)
+	struct stat st;
+
+	if (stat(p, &st) == 0)
 		return (0);
 	if (c)
 		dprintf(STDERR_FILENO, "%s: 1: %s: not found\n", c, p);

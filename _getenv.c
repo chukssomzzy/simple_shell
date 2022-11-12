@@ -1,8 +1,8 @@
 # include "main.h"
 #include <stddef.h>
+#include <stdlib.h>
 #include <unistd.h>
-static char **_strdup(char **s);
-
+static char *find_env(char **e, char *p);
 /**
  * _getenv - return a pointer to environi
  * @n: name to find
@@ -11,67 +11,38 @@ static char **_strdup(char **s);
 
 char *_getenv(char *n)
 {
-	char **env = _strdup(environ);
+	return (_strdup(find_env(environ, n)));
+}
+
+/**
+ * find_env - find env and return a pointer to the env
+ * @e: pointer to env
+ * @p: pointer to env to find
+ * Return: pointer
+ */
+
+char *find_env(char **e, char *p)
+{
 	size_t i = 0;
 
-	if (*n)
+	if (!e)
 		return (NULL);
-	while (*(env + i))
+	if (!p)
+		return (NULL);
+	while (*(e + i))
 	{
 		size_t j = 0;
 
-		while (*(env + i)[j])
+		while (*(*(e + i) + j) == *(p + j))
 		{
-			if (*(env + i)[j] != *(n + j))
-				break;
-			if (!(*(n + ++j)))
-				return (*(env + i));
+			if (!(*(p + j + 1)) && *(*(e + i) + j + 1) == '=')
+				return (*(e + i));
+			j++;
 		}
 		i++;
 	}
 	return (NULL);
 }
-
-/**
- * _strdup - duplicate string and return pointer
- * @s: pointer to string
- * Return: pointer to Null or string dupllicate
- */
-
-char **_strdup(char **s)
-{
-	char **d;
-	size_t i = 0, n, len = 20;
-
-	if (!s)
-		return (NULL);
-	for (len = 0; *(s + len) != NULL; len++)
-		;
-	d = malloc(sizeof(*d) * 20);
-	if (!d)
-	{
-		perror("malloc");
-		exit(1);
-	}
-	while (*(s + i))
-	{
-		int j = 0;
-
-		n = _strlen(*(s + i));
-		*(d + i) = malloc(sizeof(char) * (n + 1));
-		if (!(*(d + i)))
-		{
-			perror("malloc");
-			exit(1);
-		}
-		while ((*(d + i)[j] = *(s + i)[j]))
-			j++;
-		i++;
-	}
-	*(d + ++i) = NULL;
-	return (d);
-}
-
 /**
  * _strlen - str len
  * @s: pointer to string len
@@ -82,9 +53,36 @@ size_t _strlen(char *s)
 {
 	char *d = s;
 
+	if (!s)
+		return (0);
 	while (*d)
 		d++;
-	return (s - d);
+	return (d - s);
+}
+
+/**
+ * _strdup - str duplicate
+ * @s: pointer to string to duplicate
+ * Return: pointer
+ */
+
+char *_strdup(char *s)
+{
+	size_t len, i = 0;
+	char *d;
+
+	if (!s)
+		return (NULL);
+	len = _strlen(s);
+	d = malloc(sizeof(char) * (len + 1));
+	if (!d)
+	{
+		perror("Malloc");
+		exit(EXIT_FAILURE);
+	}
+	while ((*(d + i) = *(s + i)))
+		i++;
+	return (d);
 }
 
 
