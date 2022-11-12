@@ -97,7 +97,7 @@ char *_strcat(char *d, char *s)
 		return (NULL);
 	if (!s)
 		return (d);
-	t = malloc(sizeof(char) * (dlen + slen + 1 + 1));
+	t = malloc(sizeof(char) * (dlen + slen + 2));
 	if (!t)
 	{
 		perror("malloc");
@@ -112,6 +112,7 @@ char *_strcat(char *d, char *s)
 	*(t + i++) = '/';
 	while (*(s + j))
 		*(t + i++) = *(s + j++);
+	*(t + i) = '\0';
 	return (t);
 }
 
