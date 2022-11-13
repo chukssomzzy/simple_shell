@@ -26,7 +26,7 @@ char *getpath(char *p)
 		pathname = _strcat(path->p, p);
 		if (!(check_dir(pathname, NULL)))
 		{
-			free_list(path);
+			free_list(tmp);
 			return (pathname);
 		}
 		free(pathname);

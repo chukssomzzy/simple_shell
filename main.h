@@ -21,6 +21,18 @@ typedef struct pathnode
 	struct pathnode *next;
 } pathnode_t;
 
+/**
+ * struct shellbuiltin_s - create a switch of builtin shell cmd
+ * @s: cmd
+ * @cmdfunc: function to return
+ */
+
+typedef struct shellbuiltin_s
+{
+	char *s;
+	int (*cmdfunc)(void);
+} shellbuiltin_t;
+
 extern char **environ;
 int _putchar(char c);
 char **split_t_arr(char *s, const char *dl, size_t *n);
@@ -32,4 +44,8 @@ int check_dir(char *p, char *c);
 size_t _strlen(char *s);
 char *getpath(char *p);
 char *_strdup(char *s);
+int (*getbuiltin(char *s))(void);
+int exitfun(void);
+
+
 # endif

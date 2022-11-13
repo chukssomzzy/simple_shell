@@ -22,6 +22,7 @@ int main(int argc, char **argv)
 	ssize_t lnr;
 	size_t arr_size = 1;
 	char **lines;
+	int (*f)(void);
 
 	do {
 		print_line(NULL);
@@ -33,7 +34,7 @@ int main(int argc, char **argv)
 		}
 		if (lnr == 1)
 			continue;
-		arr_size = word_count(line);
+		arr_size += word_count(line);
 		lines = split_t_arr(line, DELIM, &arr_size);
 		lines[0] = getpath(lines[0]);
 		if (!lines)
@@ -41,6 +42,14 @@ int main(int argc, char **argv)
 			perror("split_t_arr");
 			exit(1);
 		}
+		f = getbuiltin(lines[0]);
+		if ((f))
+		{
+			free_buf(lines, &line);
+			f();
+			continue;
+		}
+
 		if (check_dir(lines[0], p))
 		{
 			free_buf(lines, &line);
@@ -67,7 +76,7 @@ void free_buf(char **lines, char **line)
 	if ((*lines - *line) != 0)
 		free(lines[0]);
 	free(*line);
-	free(*lines);
+	free(lines);
 	*line = NULL;
 }
 
