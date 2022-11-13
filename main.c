@@ -4,7 +4,7 @@
 # include <unistd.h>
 # include <sys/stat.h>
 # define DELIM " \n"
-static void free_buf(char **lines, char *line);
+static void free_buf(char **lines, char **line);
 static size_t word_count(char *b);
 
 /**
@@ -31,6 +31,8 @@ int main(int argc, char **argv)
 			perror("getline");
 			exit(1);
 		}
+		if (lnr == 1)
+			continue;
 		arr_size = word_count(line);
 		lines = split_t_arr(line, DELIM, &arr_size);
 		lines[0] = getpath(lines[0]);
@@ -41,7 +43,7 @@ int main(int argc, char **argv)
 		}
 		if (check_dir(lines[0], p))
 		{
-			free_buf(lines, line);
+			free_buf(lines, &line);
 			continue;
 		}
 		if ((shell_cntrl(lines)))
@@ -49,7 +51,7 @@ int main(int argc, char **argv)
 			perror("shell_cntrl");
 			exit(1);
 		}
-		free_buf(lines, line);
+		free_buf(lines, &line);
 	} while (lnr != EOF);
 	exit(EXIT_SUCCESS);
 }
@@ -60,13 +62,13 @@ int main(int argc, char **argv)
  * @line: Number of pointer in free_buf
  */
 
-void free_buf(char **lines, char *line)
+void free_buf(char **lines, char **line)
 {
-	if ((lines[0] - line) != 0)
+	if ((*lines - *line) != 0)
 		free(lines[0]);
-	free(line);
-	free(lines);
-	line = NULL;
+	free(*line);
+	free(*lines);
+	*line = NULL;
 }
 
 /**
@@ -80,7 +82,7 @@ int check_dir(char *p, char *c)
 {
 	struct stat st;
 
-	if (stat(p, &st) == 0)
+	if (p && stat(p, &st) == 0)
 		return (0);
 	if (c)
 		dprintf(STDERR_FILENO, "%s: 1: %s: not found\n", c, p);

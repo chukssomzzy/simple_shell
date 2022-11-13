@@ -4,7 +4,7 @@
 static pathnode_t *create_path_node(char *);
 static int  check_link_cmd(char *p);
 static char *_strcat(char *d, char *s);
-static void free_list(pathnode_t *p);
+static int free_list(pathnode_t *p);
 static int find_e(char *p);
 static pathnode_t *add_node_end(pathnode_t **head, char *str);
 /**
@@ -15,12 +15,12 @@ static pathnode_t *add_node_end(pathnode_t **head, char *str);
 
 char *getpath(char *p)
 {
-	pathnode_t *path;
+	pathnode_t *path, *tmp;
 	char *pathname;
 
 	if (check_link_cmd(p))
 		return (p);
-	path = create_path_node("PATH");
+	path = tmp = create_path_node("PATH");
 	while (path)
 	{
 		pathname = _strcat(path->p, p);
@@ -32,8 +32,8 @@ char *getpath(char *p)
 		free(pathname);
 		path = path->next;
 	}
-	free_list(path);
-	return (NULL);
+	free_list(tmp);
+	return (p);
 }
 
 
@@ -72,6 +72,8 @@ int  check_link_cmd(char *p)
 {
 	char *s = p;
 
+	if (!s)
+		return (0);
 	while ((*s))
 		if (*s++ == '/')
 			return (1);
@@ -117,9 +119,10 @@ char *_strcat(char *d, char *s)
 /**
  * free_list - frees path free_list
  * @p: points to struct
+ * Return: 0
  */
 
-void free_list(pathnode_t *p)
+int free_list(pathnode_t *p)
 {
 	pathnode_t *tmp;
 
@@ -131,6 +134,7 @@ void free_list(pathnode_t *p)
 	}
 	free(p->p);
 	free(p);
+	return (0);
 }
 
 /**
