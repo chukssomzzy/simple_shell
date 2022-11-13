@@ -21,7 +21,7 @@ char *getpath(char *p)
 	if (check_link_cmd(p))
 		return (p);
 	path = create_path_node("PATH");
-	while (path->next)
+	while (path)
 	{
 		pathname = _strcat(path->p, p);
 		if (!(check_dir(pathname, NULL)))
@@ -32,7 +32,6 @@ char *getpath(char *p)
 		free(pathname);
 		path = path->next;
 	}
-	free(p);
 	free_list(path);
 	return (NULL);
 }
@@ -126,9 +125,11 @@ void free_list(pathnode_t *p)
 
 	while ((tmp = p->next))
 	{
+		free(p->p);
 		free(p);
 		p = tmp;
 	}
+	free(p->p);
 	free(p);
 }
 

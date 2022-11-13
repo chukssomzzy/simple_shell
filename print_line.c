@@ -9,7 +9,7 @@
 void print_line(char *s)
 {
 	if (!s)
-		dprintf(STDOUT_FILENO, "#cisfun$ ");
+		dprintf(STDOUT_FILENO, "$ ");
 	else
-		dprintf(STDOUT_FILENO, "~%s#cisfun$ ", s);
+		dprintf(STDOUT_FILENO, "~%s $ ", s);
 }

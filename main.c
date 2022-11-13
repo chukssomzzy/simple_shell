@@ -4,7 +4,7 @@
 # include <unistd.h>
 # include <sys/stat.h>
 # define DELIM " \n"
-static void free_buf(char **buf, size_t n);
+static void free_buf(char **lines, char *line);
 static size_t word_count(char *b);
 
 /**
@@ -22,7 +22,6 @@ int main(int argc, char **argv)
 	ssize_t lnr;
 	size_t arr_size = 1;
 	char **lines;
-	char *tmp;
 
 	do {
 		print_line(NULL);
@@ -34,7 +33,6 @@ int main(int argc, char **argv)
 		}
 		arr_size = word_count(line);
 		lines = split_t_arr(line, DELIM, &arr_size);
-		tmp = lines[0];
 		lines[0] = getpath(lines[0]);
 		if (!lines)
 		{
@@ -43,9 +41,7 @@ int main(int argc, char **argv)
 		}
 		if (check_dir(lines[0], p))
 		{
-			line = NULL;
-			free(tmp);
-			free(lines);
+			free_buf(lines, line);
 			continue;
 		}
 		if ((shell_cntrl(lines)))
@@ -53,26 +49,24 @@ int main(int argc, char **argv)
 			perror("shell_cntrl");
 			exit(1);
 		}
-		free(tmp);
-		free(lines);
-		lines = NULL;
+		free_buf(lines, line);
 	} while (lnr != EOF);
 	exit(EXIT_SUCCESS);
 }
 
 /**
  * free_buf - free free_buf
- * @buf: buf to free
- * @n: Number of pointer in free_buf
+ * @lines: buf to free
+ * @line: Number of pointer in free_buf
  */
 
-void free_buf(char **buf, size_t n)
+void free_buf(char **lines, char *line)
 {
-	size_t i = 0;
-
-	while (i < n)
-		free(*(buf + i++));
-	free(buf);
+	if ((lines[0] - line) != 0)
+		free(lines[0]);
+	free(line);
+	free(lines);
+	line = NULL;
 }
 
 /**

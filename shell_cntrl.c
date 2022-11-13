@@ -35,6 +35,7 @@ int shell_cntrl(char **argv)
 				perror("waitpid");
 				return (1);
 			}
+			fflush(stdout);
 		} while (!WIFSIGNALED(status) && !WIFEXITED(status));
 	return (0);
 }
