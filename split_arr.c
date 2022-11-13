@@ -1,5 +1,5 @@
 # include "main.h"
-#include <stdio.h>
+# include <stdio.h>
 
 /**
  * split_t_arr - split string into array

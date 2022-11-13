@@ -1,9 +1,12 @@
 # include "main.h"
 # include <stdio.h>
+#include <stdlib.h>
 # include <unistd.h>
 # include <sys/stat.h>
 # define DELIM " \n"
 static void free_buf(char **buf, size_t n);
+static size_t word_count(char *b);
+
 /**
  * main - starting point for execution
  * @argc: Size of argv
@@ -27,9 +30,9 @@ int main(int argc, char **argv)
 		if (lnr == -1)
 		{
 			perror("getline");
-			free(line);
 			exit(1);
 		}
+		arr_size = word_count(line);
 		lines = split_t_arr(line, DELIM, &arr_size);
 		tmp = lines[0];
 		lines[0] = getpath(lines[0]);
@@ -50,8 +53,11 @@ int main(int argc, char **argv)
 			perror("shell_cntrl");
 			exit(1);
 		}
+		free(tmp);
 		free_buf(lines, arr_size);
+		free(line);
 	} while (lnr != EOF);
+	exit(EXIT_SUCCESS);
 }
 
 /**
@@ -87,3 +93,22 @@ int check_dir(char *p, char *c)
 	return (1);
 }
 
+/**
+ * word_count - find number of word in buffer
+ * @b: buffer
+ * Return: number of word
+ */
+
+size_t word_count(char *b)
+{
+	size_t n = 0;
+	char *s = b;
+
+	while (*s)
+	{
+		if (*s == ' ' || *s == '\t' || *s == '\n')
+			n++;
+		s++;
+	}
+	return (n);
+}
