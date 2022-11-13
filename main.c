@@ -43,9 +43,9 @@ int main(int argc, char **argv)
 		}
 		if (check_dir(lines[0], p))
 		{
-			free(line);
+			line = NULL;
 			free(tmp);
-			free_buf(lines, arr_size);
+			free(lines);
 			continue;
 		}
 		if ((shell_cntrl(lines)))
@@ -54,8 +54,8 @@ int main(int argc, char **argv)
 			exit(1);
 		}
 		free(tmp);
-		free_buf(lines, arr_size);
-		free(line);
+		free(lines);
+		lines = NULL;
 	} while (lnr != EOF);
 	exit(EXIT_SUCCESS);
 }
@@ -101,13 +101,18 @@ int check_dir(char *p, char *c)
 
 size_t word_count(char *b)
 {
-	size_t n = 0;
+	size_t n = 0, state = 0;
 	char *s = b;
 
 	while (*s)
 	{
-		if (*s == ' ' || *s == '\t' || *s == '\n')
+		if ((*s == ' ' || *s == '\t' || *s == '\n') && !state)
+		{
+			state = 1;
 			n++;
+		}
+		else
+			state = 0;
 		s++;
 	}
 	return (n);
