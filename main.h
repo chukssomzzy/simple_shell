@@ -45,6 +45,7 @@ size_t _strlen(char *s);
 char *getpath(char *p);
 char *_strdup(char *s);
 int (*getbuiltin(char *s))(void);
+int envfun(void);
 int exitfun(void);
 
 

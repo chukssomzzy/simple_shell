@@ -10,6 +10,7 @@ int (*getbuiltin(char *s))(void)
 {
 	shellbuiltin_t builtin[] = {
 		{"exit", exitfun},
+		{"env", envfun},
 		{NULL, NULL}
 	};
 	int i = 0;
