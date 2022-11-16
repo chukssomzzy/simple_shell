@@ -9,7 +9,7 @@
 void print_line(char *s)
 {
 	if (!s)
-		dprintf(STDOUT_FILENO, "$ ");
+		dprintf(STDOUT_FILENO, "($) ");
 	else
-		dprintf(STDOUT_FILENO, "~%s $ ", s);
+		dprintf(STDOUT_FILENO, "~%s ($) ", s);
 }
