@@ -90,11 +90,12 @@ void free_buf(char **lines, char **line)
 int check_dir(char *p, char *c)
 {
 	struct stat st;
+	static int ctn = 1;
 
 	if (p && stat(p, &st) == 0)
 		return (0);
 	if (c)
-		dprintf(STDERR_FILENO, "%s: 1: %s: not found\n", c, p);
+		dprintf(STDERR_FILENO, "%s: %d: %s: not found\n", c, ctn++, p);
 	return (1);
 }
 
