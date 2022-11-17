@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 		lnr = getline(&line, &n, stdin);
 		if (lnr == -1)
 		{
-			perror("getline");
+			dprintf(STDOUT_FILENO, "\n");
 			exit(1);
 		}
 		if (lnr == 1)
