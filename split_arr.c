@@ -26,7 +26,7 @@ char **split_t_arr(char *s, const char *dl, size_t *n)
 		if (i >= *n)
 		{
 			*n += 1;
-			argv = realloc(argv, sizeof(*argv) * *n);
+			argv = _realloc(argv, sizeof(*argv) * *n);
 			if (!argv)
 			{
 				perror("realloc");

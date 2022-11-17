@@ -48,5 +48,6 @@ int (*getbuiltin(char *s)) (void);
 int envfun(void);
 int exitfun(void);
 ssize_t _getline(char **s, int *n);
+void *_realloc(void *ptr, size_t size);
 
 # endif
