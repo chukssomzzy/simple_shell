@@ -11,7 +11,6 @@ static void free_buf(char **buf, size_t n);
  * Return: 0 (successe))
  */
 
-
 int main(int argc, char **argv)
 {
 	char *line = NULL, *p = argv[argc - 1];
