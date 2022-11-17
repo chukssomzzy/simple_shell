@@ -44,9 +44,9 @@ int check_dir(char *p, char *c);
 size_t _strlen(char *s);
 char *getpath(char *p);
 char *_strdup(char *s);
-int (*getbuiltin(char *s))(void);
+int (*getbuiltin(char *s)) (void);
 int envfun(void);
 int exitfun(void);
-
+ssize_t _getline(char **s, int *n);
 
 # endif
