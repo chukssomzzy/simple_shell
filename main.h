@@ -47,6 +47,6 @@ char *_strdup(char *s);
 int (*getbuiltin(char *s)) (void);
 int envfun(void);
 int exitfun(void);
-ssize_t _getline(char *s, int *n);
+ssize_t _getline(char **s, int *n);
 
 # endif

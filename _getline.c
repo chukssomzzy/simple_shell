@@ -1,6 +1,6 @@
 # include "main.h"
+#include <sys/types.h>
 # include <unistd.h>
-static int _getchar(void);
 static void *_realloc(void *ptr, size_t size);
 
 /**
@@ -10,47 +10,49 @@ static void *_realloc(void *ptr, size_t size);
  * Return: pointer number of character read
  */
 
-ssize_t _getline(char *s, int *n)
+ssize_t _getline(char **s, int *n)
 {
 	int i = 0;
-	int c;
+	ssize_t numrd;
+	char *tmpptr;
 
 	if (!n)
 		*n = 128;
-	if (!s)
-		s = malloc(sizeof(char) * *n);
-	while ((c = _getchar()) != -1)
+	if (!*s)
+		*s = malloc(sizeof(char) * *n);
+	if (!*s)
 	{
-		if (c != '\0')
-		{
-			if (!(i < *n))
-			{
-				*n += 128;
-				s = _realloc(s, *n);
-			}
-			*(s + i) = c;
-			i++;
-			if (c == '\n')
-				break;
-		} else
-			return (-1);
+		perror("malloc");
+		exit(1);
 	}
-	return (i + 1);
+	tmpptr = *s;
+	while  ((numrd = read(STDOUT_FILENO, *s, *n)) >= 0)
+	{
+		int tmp = i;
+
+		while (i < (tmp + numrd))
+			if (*(*s + i++) == '\n')
+			{
+				*(*s + i) = '\0';
+				*s = tmpptr;
+				return (i);
+			} else if ((int) *(*s + i - 1) == EOF)
+				return (EOF);
+		if (i >= (*n - 1))
+		{
+			*n += 128;
+			*s = _realloc(*s, *n);
+			if (!*s)
+			{
+				perror("_realloc");
+				exit(1);
+			}
+		}
+		*s = (*s + i);
+	}
+	return (-1);
 }
 
-
-/**
- * _getchar - read a char from stdin
- * Return: number of char read
- */
-
-int _getchar(void)
-{
-	int c;
-
-	read(STDIN_FILENO, &c, 1);
-	return (c);
-}
 
 /**
  * _realloc - copies a buffer and increses it size
