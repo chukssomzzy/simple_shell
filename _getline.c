@@ -1,7 +1,6 @@
 # include "main.h"
 #include <sys/types.h>
 # include <unistd.h>
-static void *_realloc(void *ptr, size_t size);
 
 /**
  * _getline - get line from stdin
